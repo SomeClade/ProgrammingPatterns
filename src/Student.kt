@@ -3,10 +3,10 @@ data class Student(
     val surname: String,
     val name: String,
     val patronymic: String,
-    val phone: String? = null,
-    val telegram: String? = null,
-    val email: String? = null,
-    val git: String? = null
+    var phone: String? = null,
+    var telegram: String? = null,
+    var email: String? = null,
+    var git: String? = null
 ) {
     fun displayInfo() {
         println("""
@@ -21,23 +21,26 @@ data class Student(
         """.trimIndent())
     }
 
-    companion object Factory { // классическая фабрика на проверку регулярками
+    companion object Factory {
         private val nameRegex = Regex("^[А-Яа-яA-Za-z-]+$")
         private val phoneRegex = Regex("^\\+?[0-9]{10,15}\$")
         private val telegramRegex = Regex("^@[A-Za-z0-9_]{5,32}\$")
         private val emailRegex = Regex("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}\$")
         private val gitRegex = Regex("^(https?://)?(www\\.)?github\\.com/[A-Za-z0-9_-]+/?\$")
 
-        fun create(
-            id: Int,
-            surname: String,
-            name: String,
-            patronymic: String,
-            phone: String? = null,
-            telegram: String? = null,
-            email: String? = null,
-            git: String? = null
-        ): Student? {
+        fun createFromMap(params: Map<String, Any?>): Student? {
+            // Берём значения из хэша обязательные
+            val id = params["id"] as? Int ?: return null
+            val surname = params["surname"] as? String ?: return null
+            val name = params["name"] as? String ?: return null
+            val patronymic = params["patronymic"] as? String ?: return null
+            // не обязательные
+            val phone = params["phone"] as? String
+            val telegram = params["telegram"] as? String
+            val email = params["email"] as? String
+            val git = params["git"] as? String
+
+            // Валидация
             return if (validateFIO(surname, name, patronymic) &&
                 (phone == null || validatePhone(phone)) &&
                 (telegram == null || validateTelegram(telegram)) &&

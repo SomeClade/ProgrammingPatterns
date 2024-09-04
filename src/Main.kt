@@ -1,35 +1,38 @@
 fun main() {
-    val student1 = Student.create(
-        id = 1,
-        surname = "Иванов",
-        name = "Иван",
-        patronymic = "Иванович",
-        phone = "+71234567890",
-        telegram = "@ivanov",
-        email = "ivanov@example.com",
-        git = "https://github.com/ivanov"
+    // Создаем объект через хэш-структуру
+    val student1 = Student.Factory.createFromMap(
+        mapOf(
+            "id" to 1,
+            "surname" to "Иванов",
+            "name" to "Иван",
+            "patronymic" to "Иванович",
+            "phone" to "+79001234567",
+            "telegram" to "@ivanov",
+            "email" to "ivanov@example.com",
+            "git" to "https://github.com/ivanov"
+        )
     )
 
-    val student2 = Student.create(
-        id = 2,
-        surname = "Петров",
-        name = "Петр",
-        patronymic = "Петрович",
-        phone = "+79876543210"
+    val student2 = Student.Factory.createFromMap(
+        mapOf(
+            "id" to 2,
+            "surname" to "Петров",
+            "name" to "Петр",
+            "patronymic" to "Петрович",
+            "telegram" to "@petrov"
+        )
     )
 
-    val student3 = Student.create(
-        id = 3,
-        surname = "Петров",
-        name = "Петр",
-        patronymic = "Петрович",
-        phone = "сергей"
+    val student3 = Student.Factory.createFromMap(
+        mapOf(
+            "id" to 3,
+            "surname" to "Сидоров",
+            "name" to "Сидор",
+            "patronymic" to "Сидорович"
+        )
     )
-
 
     student1?.displayInfo()
-    println()
     student2?.displayInfo()
-    println()
     student3?.displayInfo()
 }

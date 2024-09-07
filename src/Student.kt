@@ -30,6 +30,21 @@ data class Student(
         )
     }
 
+    // Метод для проверки наличия Git
+    fun hasGit(): Boolean {
+        return git != null && git!!.isNotBlank()
+    }
+
+    // Метод для проверки наличия хотя бы одного контакта
+    fun hasContact(): Boolean {
+        return !phone.isNullOrBlank() || !telegram.isNullOrBlank() || !email.isNullOrBlank()
+    }
+
+    // Метод для валидации наличия Git и контакта
+    fun validate(): Boolean {
+        return hasGit() && hasContact()
+    }
+
     companion object Factory {
         private val nameRegex = Regex("^[А-Яа-яA-Za-z-]+$")
         private val phoneRegex = Regex("^\\+?[0-9]{10,15}\$")
@@ -56,7 +71,12 @@ data class Student(
                 (email == null || validateEmail(email)) &&
                 (git == null || validateGit(git))
             ) {
-                Student(id, surname, name, patronymic, phone, telegram, email, git)
+                val student = Student(id, surname, name, patronymic, phone, telegram, email, git)
+                if (!student.validate()) {
+                    println("Ошибка: Студент должен иметь Git и хотя бы один контакт для связи.")
+                    return null
+                }
+                student
             } else {
                 println("Ошибка при создании студента с ID $id: Некорректные данные.")
                 null

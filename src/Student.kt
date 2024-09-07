@@ -8,8 +8,16 @@ data class Student(
     var email: String? = null,
     var git: String? = null
 ) {
+    init {
+        // Проверяем телефон при инициализации
+        if (phone != null && !Factory.isPhoneNumberValid(phone!!)) {
+            throw IllegalArgumentException("Неверный формат телефона: $phone")
+        }
+    }
+
     fun displayInfo() {
-        println("""
+        println(
+            """
             ID: $id
             Фамилия: $surname
             Имя: $name
@@ -18,7 +26,8 @@ data class Student(
             Телеграм: ${telegram ?: "не указан"}
             Почта: ${email ?: "не указана"}
             Гит: ${git ?: "не указан"}
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 
     companion object Factory {
@@ -34,7 +43,7 @@ data class Student(
             val surname = params["surname"] as? String ?: return null
             val name = params["name"] as? String ?: return null
             val patronymic = params["patronymic"] as? String ?: return null
-            // не обязательные
+            // Не обязательные
             val phone = params["phone"] as? String
             val telegram = params["telegram"] as? String
             val email = params["email"] as? String
@@ -54,12 +63,16 @@ data class Student(
             }
         }
 
+        fun isPhoneNumberValid(phone: String): Boolean {
+            return phoneRegex.matches(phone)
+        }
+
         private fun validateFIO(surname: String, name: String, patronymic: String): Boolean {
             return nameRegex.matches(surname) && nameRegex.matches(name) && nameRegex.matches(patronymic)
         }
 
         private fun validatePhone(phone: String): Boolean {
-            return phoneRegex.matches(phone)
+            return isPhoneNumberValid(phone)
         }
 
         private fun validateTelegram(telegram: String): Boolean {

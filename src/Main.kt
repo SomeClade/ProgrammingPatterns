@@ -35,4 +35,8 @@ fun main() {
     student1?.displayInfo()
     student2?.displayInfo()
     student3?.displayInfo()
+
+    // Тестирование проверки номера телефона
+    println(Student.Factory.isPhoneNumberValid("+79001234567"))
+    println(Student.Factory.isPhoneNumberValid("12345"))
 }

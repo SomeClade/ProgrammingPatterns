@@ -1,0 +1,30 @@
+@startuml
+class Student {
+    - id: Int
+    - surname: String
+    - name: String
+    - patronymic: String
+    - phone: String?
+    - telegram: String?
+    - email: String?
+    - git: String?
+    --
+    + displayInfo(): Unit
+    + setContacts(phone: String?, telegram: String?, email: String?): Unit
+    + hasGit(): Boolean
+    + hasContact(): Boolean
+    + validate(): Boolean
+}
+
+class Factory {
+    + createFromMap(params: Map<String, Any?>): Student?
+    + isPhoneNumberValid(phone: String): Boolean
+    + validatePhone(phone: String): Boolean
+    + validateTelegram(telegram: String): Boolean
+    + validateEmail(email: String): Boolean
+    + validateGit(git: String): Boolean
+}
+
+Student -down-> Factory : <<companion object>>
+
+@enduml

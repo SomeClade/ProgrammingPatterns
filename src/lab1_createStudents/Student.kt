@@ -1,3 +1,5 @@
+package lab1_createStudents
+
 data class Student(
     val id: Int,
     val surname: String,
@@ -10,7 +12,7 @@ data class Student(
 ) {
     init {
         // Проверяем телефон при инициализации
-        if (phone != null && !Factory.isPhoneNumberValid(phone!!)) {
+        if (phone != null && !isPhoneNumberValid(phone!!)) {
             throw IllegalArgumentException("Неверный формат телефона: $phone")
         }
     }
@@ -28,6 +30,28 @@ data class Student(
             Гит: ${git ?: "не указан"}
         """.trimIndent()
         )
+    }
+
+    // Метод для установки контактов
+    fun setContacts(phone: String? = null, telegram: String? = null, email: String? = null) {
+        if (phone != null) {
+            if (!isPhoneNumberValid(phone)) {
+                throw IllegalArgumentException("Неверный формат телефона: $phone")
+            }
+            this.phone = phone
+        }
+        if (telegram != null) {
+            if (!validateTelegram(telegram)) {
+                throw IllegalArgumentException("Неверный формат Telegram: $telegram")
+            }
+            this.telegram = telegram
+        }
+        if (email != null) {
+            if (!validateEmail(email)) {
+                throw IllegalArgumentException("Неверный формат email: $email")
+            }
+            this.email = email
+        }
     }
 
     // Метод для проверки наличия Git
@@ -53,18 +77,15 @@ data class Student(
         private val gitRegex = Regex("^(https?://)?(www\\.)?github\\.com/[A-Za-z0-9_-]+/?\$")
 
         fun createFromMap(params: Map<String, Any?>): Student? {
-            // Берём значения из хэша обязательные
             val id = params["id"] as? Int ?: return null
             val surname = params["surname"] as? String ?: return null
             val name = params["name"] as? String ?: return null
             val patronymic = params["patronymic"] as? String ?: return null
-            // Не обязательные
             val phone = params["phone"] as? String
             val telegram = params["telegram"] as? String
             val email = params["email"] as? String
             val git = params["git"] as? String
 
-            // Валидация
             return if (validateFIO(surname, name, patronymic) &&
                 (phone == null || validatePhone(phone)) &&
                 (telegram == null || validateTelegram(telegram)) &&

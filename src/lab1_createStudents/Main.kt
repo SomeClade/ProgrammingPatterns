@@ -1,8 +1,10 @@
 package lab1_createStudents
 
 fun main() {
-    // Создаем объект через хэш-структуру
-    val student1 = Student.createFromMap(
+    val studentManager = StudentManager()
+
+    // Создание студентов
+    val student1 = Student.Factory.createFromMap(
         mapOf(
             "id" to 1,
             "surname" to "Иванов",
@@ -15,7 +17,7 @@ fun main() {
         )
     )
 
-    val student2 = Student.createFromMap(
+    val student2 = Student.Factory.createFromMap(
         mapOf(
             "id" to 2,
             "surname" to "Петров",
@@ -25,42 +27,21 @@ fun main() {
         )
     )
 
-    val student3 = Student.createFromMap(
-        mapOf(
-            "id" to 3,
-            "surname" to "Сидоров",
-            "name" to "Сидор",
-            "patronymic" to "Сидорович"
-        )
-    )
+    // Добавление студентов в систему
+    studentManager.createStudent(student1!!)
+    studentManager.createStudent(student2!!)
 
-    // Проверка студентов
-    if (student1 != null) {
-        student1.displayInfo()
-        println("Валидность студента 1: ${student1.validate()}")
-    }
+    // Чтение и вывод информации о студентах
+    println("Информация о студенте 1:")
+    studentManager.readStudent(1)?.displayInfo()
 
-    if (student2 != null) {
-        student2.displayInfo()
-        println("Валидность студента 2: ${student2.validate()}")
-    }
+    // Обновление данных студента
+    println("\nОбновление контактов студента 2:")
+    studentManager.updateStudent(2, mapOf("phone" to "+79009876543", "email" to "petrov@newmail.com"))
+    studentManager.readStudent(2)?.displayInfo()
 
-    if (student3 != null) {
-        student3.displayInfo()
-        println("Валидность студента 3: ${student3.validate()}")
-    }
-
-    // использование setContacts
-    println("\nОбновляем контакты студента 2:")
-    student2?.setContacts(phone = "+79009876543", email = "petrov@newmail.com")
-    student2?.displayInfo()
-    println("Валидность студента 2 после обновления: ${student2?.validate()}")
-
-    // Проверка невалидных контактов
-    try {
-        println("\nПытаемся установить неверный телефон студенту 3:")
-        student3?.setContacts(phone = "12345")
-    } catch (e: IllegalArgumentException) {
-        println("Ошибка: ${e.message}")
-    }
+    // Удаление студента
+    println("\nУдаление студента 1:")
+    studentManager.deleteStudent(1)
+    studentManager.displayAllStudents()
 }

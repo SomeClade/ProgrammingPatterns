@@ -4,7 +4,7 @@ class Student(
     val id: Int,
     val surname: String,
     val name: String,
-    val patronymic: String,
+    val patronymic: String? = null,
     phone: String? = null,
     telegram: String? = null,
     email: String? = null,
@@ -42,13 +42,31 @@ class Student(
             field = value
         }
 
+    init {
+        if (!validate()) {
+            throw IllegalArgumentException("Студент должен иметь хотя бы один контакт или Git.")
+        }
+    }
+
+    // Конструктор для парсинга строки
+    constructor(data: String) : this(
+        id = data.split(";")[0].toIntOrNull() ?: throw IllegalArgumentException("Неверный ID"),
+        surname = data.split(";")[1],
+        name = data.split(";")[2],
+        patronymic = data.split(";").getOrNull(3),
+        phone = data.split(";").getOrNull(4),
+        telegram = data.split(";").getOrNull(5),
+        email = data.split(";").getOrNull(6),
+        git = data.split(";").getOrNull(7)
+    )
+
     // Отображение информации о студенте
     fun displayInfo() {
         println("""
             ID: $id
             Фамилия: $surname
             Имя: $name
-            Отчество: $patronymic
+            Отчество: ${patronymic ?: "не указано"}
             Телефон: ${phone ?: "не указан"}
             Телеграм: ${telegram ?: "не указан"}
             Почта: ${email ?: "не указана"}
@@ -56,9 +74,21 @@ class Student(
         """.trimIndent())
     }
 
+    // Краткая информация (фамилия, инициалы, Git, контакты)
+    fun getInfo(): String {
+        val initials = "${name.firstOrNull() ?: ""}.${patronymic?.firstOrNull() ?: ""}."
+        val contact = when {
+            !phone.isNullOrBlank() -> "Телефон: $phone"
+            !telegram.isNullOrBlank() -> "Телеграм: $telegram"
+            !email.isNullOrBlank() -> "Почта: $email"
+            else -> "Контактов нет"
+        }
+        return "Фамилия: $surname $initials, Git: ${git ?: "не указан"}, $contact"
+    }
+
     // Валидация наличия Git и хотя бы одного контакта
     fun validate(): Boolean {
-        return hasGit() && hasContact()
+        return hasGit() || hasContact()
     }
 
     fun hasGit(): Boolean {
@@ -96,20 +126,6 @@ class Student(
 
         fun validateGit(git: String): Boolean {
             return gitRegex.matches(git)
-        }
-
-        // Создание студента через карту данных
-        fun createFromMap(params: Map<String, Any?>): Student? {
-            val id = params["id"] as? Int ?: return null
-            val surname = params["surname"] as? String ?: return null
-            val name = params["name"] as? String ?: return null
-            val patronymic = params["patronymic"] as? String ?: return null
-            val phone = params["phone"] as? String
-            val telegram = params["telegram"] as? String
-            val email = params["email"] as? String
-            val git = params["git"] as? String
-
-            return Student(id, surname, name, patronymic, phone, telegram, email, git)
         }
     }
 }

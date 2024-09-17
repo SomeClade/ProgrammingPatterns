@@ -18,16 +18,6 @@ class StudentManager {
         return students.find { it.id == id }
     }
 
-    // Обновление данных студента по ID
-    fun updateStudent(id: Int, updatedData: Map<String, Any?>): Boolean {
-        val student = readStudent(id) ?: return false
-        updatedData["phone"]?.let { student.phone = it as String }
-        updatedData["telegram"]?.let { student.telegram = it as String }
-        updatedData["email"]?.let { student.email = it as String }
-        updatedData["git"]?.let { student.git = it as String }
-        return true
-    }
-
     // Удаление студента по ID
     fun deleteStudent(id: Int): Boolean {
         val student = readStudent(id) ?: run {
@@ -36,7 +26,6 @@ class StudentManager {
         }
         return students.remove(student)
     }
-
 
     // Отображение всех студентов
     fun displayAllStudents() {

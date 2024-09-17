@@ -1,30 +1,46 @@
 @startuml
-class Student {
+class Person {
     - id: Int
     - surname: String
     - name: String
-    - patronymic: String
-    - phone: String?
-    - telegram: String?
-    - email: String?
     - git: String?
+    - contact: String?
     --
-    + displayInfo(): Unit
-    + setContacts(phone: String?, telegram: String?, email: String?): Unit
+    + getSurnameAndInitials(): String
+    + getContactInfo(): String
     + hasGit(): Boolean
     + hasContact(): Boolean
     + validate(): Boolean
+    + displayInfo(): Unit
+}
+
+class Student {
+    - patronymic: String?
+    - phone: String?
+    - telegram: String?
+    - email: String?
+    --
+    + displayInfo(): Unit
+    + validate(): Boolean
+    --
+    + hasGit(): Boolean
+    + hasContact(): Boolean
+}
+
+class Student_short {
+    --
+    + displayInfo(): Unit
 }
 
 class Factory {
-    + createFromMap(params: Map<String, Any?>): Student?
-    + isPhoneNumberValid(phone: String): Boolean
+    + validateGit(git: String): Boolean
     + validatePhone(phone: String): Boolean
     + validateTelegram(telegram: String): Boolean
     + validateEmail(email: String): Boolean
-    + validateGit(git: String): Boolean
 }
 
-Student -down-> Factory : <<companion object>>
+Person <|-- Student
+Person <|-- Student_short
+Person -down-> Factory : <<companion object>>
 
 @enduml

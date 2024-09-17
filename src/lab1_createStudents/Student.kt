@@ -4,35 +4,12 @@ class Student(
     id: Int,
     surname: String,
     name: String,
-    val patronymic: String? = null,
+    patronymic: String? = null,
     phone: String? = null,
     telegram: String? = null,
     email: String? = null,
     git: String? = null
-) : Person(id, surname, name, git, getPrimaryContact(phone, telegram, email)) {
-
-    companion object {
-        private val phoneRegex = Regex("^\\+?[0-9]{10,15}\$")
-        private val telegramRegex = Regex("^@[A-Za-z0-9_]{5,32}\$")
-        private val emailRegex = Regex("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}\$")
-
-        private fun getPrimaryContact(phone: String?, telegram: String?, email: String?): String? {
-            return phone ?: telegram ?: email
-        }
-
-        // Валидация полей
-        fun isPhoneNumberValid(phone: String): Boolean {
-            return phoneRegex.matches(phone)
-        }
-
-        fun validateTelegram(telegram: String): Boolean {
-            return telegramRegex.matches(telegram)
-        }
-
-        fun validateEmail(email: String): Boolean {
-            return emailRegex.matches(email)
-        }
-    }
+) : Person(id, surname, name, patronymic, git, phone, telegram, email) {
 
     // Конструктор для создания студента из строки
     constructor(data: String) : this(
@@ -54,10 +31,36 @@ class Student(
 
     // Переопределяем валидацию для проверки контактов
     override fun validate(): Boolean {
-        return super.validate() || validateContacts()
+        return super.validate()
     }
 
-    private fun validateContacts(): Boolean {
-        return (contact != null && (isPhoneNumberValid(contact!!) || validateTelegram(contact!!) || validateEmail(contact!!)))
+    companion object Factory {
+        private val phoneRegex = Regex("^\\+?[0-9]{10,15}\$")
+
+        fun isPhoneNumberValid(phone: String): Boolean {
+            return phoneRegex.matches(phone)
+        }
+    }
+
+    // Метод для установки контактов
+    fun setContacts(newPhone: String? = null, newTelegram: String? = null, newEmail: String? = null) {
+        if (newPhone != null && !Factory.isPhoneNumberValid(newPhone)) {
+            throw IllegalArgumentException("Неверный формат номера телефона")
+        }
+        phone = newPhone
+        telegram = newTelegram
+        email = newEmail
+    }
+
+    // Метод для получения краткой информации
+    fun getInfo(): String {
+        val initials = "${name.firstOrNull() ?: ""}.${patronymic?.firstOrNull() ?: ""}."
+        val contact = when {
+            !phone.isNullOrBlank() -> "Телефон: $phone"
+            !telegram.isNullOrBlank() -> "Телеграм: $telegram"
+            !email.isNullOrBlank() -> "Почта: $email"
+            else -> "Контактов нет"
+        }
+        return "Фамилия: $surname $initials, Git: ${git ?: "не указан"}, $contact"
     }
 }

@@ -4,8 +4,11 @@ open class Person(
     val id: Int,
     val surname: String,
     val name: String,
+    val patronymic: String? = null,
     val git: String? = null,
-    val contact: String? = null
+    var phone: String? = null,
+    var telegram: String? = null,
+    var email: String? = null
 ) {
     init {
         if (!validate()) {
@@ -19,11 +22,11 @@ open class Person(
     }
 
     fun hasGit(): Boolean {
-        return git != null && git!!.isNotBlank() && Factory.validateGit(git!!)
+        return git != null && git!!.isNotBlank() && Student.Factory.isPhoneNumberValid(git!!)
     }
 
     fun hasContact(): Boolean {
-        return !contact.isNullOrBlank()
+        return !phone.isNullOrBlank() || !telegram.isNullOrBlank() || !email.isNullOrBlank()
     }
 
     // Метод для получения фамилии и инициалов
@@ -34,7 +37,12 @@ open class Person(
 
     // Метод для получения информации о контакте
     fun getContactInfo(): String {
-        return contact ?: "Контактов нет"
+        return when {
+            !phone.isNullOrBlank() -> "Телефон: $phone"
+            !telegram.isNullOrBlank() -> "Телеграм: $telegram"
+            !email.isNullOrBlank() -> "Почта: $email"
+            else -> "Контактов нет"
+        }
     }
 
     // Общий метод для отображения информации
@@ -45,14 +53,5 @@ open class Person(
             Git: ${git ?: "не указан"}
             Контакт: ${getContactInfo()}
         """.trimIndent())
-    }
-
-    // Фабрика для валидации (переносим логику валидации из предыдущего кода)
-    companion object Factory {
-        private val gitRegex = Regex("^(https?://)?(www\\.)?github\\.com/[A-Za-z0-9_-]+/?\$")
-
-        fun validateGit(git: String): Boolean {
-            return gitRegex.matches(git)
-        }
     }
 }

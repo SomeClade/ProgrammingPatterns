@@ -1,5 +1,7 @@
 package lab1_createStudents
 
+import Data_table
+
 fun main() {
     val studentManager = StudentManager()
 
@@ -97,4 +99,20 @@ fun main() {
     } else {
         println("Студент 1 не прошел валидацию.")
     }
+
+
+    // Создание объекта Data_table с двумерным массивом строк
+    val stringTable = Data_table(arrayOf(
+        arrayOf("ID", "Имя", "Фамилия"),
+        arrayOf("1", "Иван", "Иванов"),
+        arrayOf("2", "Петр", "Петров")
+    ))
+
+    // Отображение значений
+    println("Значение в (0,0): ${stringTable.getValue(0, 0)}")
+    println("Количество строк: ${stringTable.getRowCount()}")
+    println("Количество колонок в строке 1: ${stringTable.getColumnCount(1)}")
+
+    // Вывод таблицы на экран
+    stringTable.displayTable()
 }

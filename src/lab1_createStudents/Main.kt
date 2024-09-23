@@ -108,11 +108,13 @@ fun main() {
         arrayOf("2", "Петр", "Петров")
     ))
 
-    // Отображение значений
-    println("Значение в (0,0): ${stringTable.getValue(0, 0)}")
-    println("Количество строк: ${stringTable.getRowCount()}")
-    println("Количество колонок в строке 1: ${stringTable.getColumnCount(1)}")
+    // Получение значения элемента без возможности его редактирования
+    println("Значение в (1, 1): ${stringTable.getValue(1, 1)}") // Иван
 
-    // Вывод таблицы на экран
+    // Получение количества строк и столбцов
+    println("Количество строк: ${stringTable.getRowCount()}")
+    println("Количество столбцов: ${stringTable.getColumnCount()}")
+
+    // Отображение таблицы
     stringTable.displayTable()
 }

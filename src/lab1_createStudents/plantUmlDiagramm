@@ -3,8 +3,11 @@ class Person {
     - id: Int
     - surname: String
     - name: String
+    - patronymic: String?
     - git: String?
-    - contact: String?
+    - phone: String?
+    - telegram: String?
+    - email: String?
     --
     + getSurnameAndInitials(): String
     + getContactInfo(): String
@@ -15,32 +18,32 @@ class Person {
 }
 
 class Student {
-    - patronymic: String?
-    - phone: String?
-    - telegram: String?
-    - email: String?
-    --
-    + displayInfo(): Unit
+    + setContacts(phone: String?, telegram: String?, email: String?): Unit
+    + getInfo(): String
     + validate(): Boolean
     --
-    + hasGit(): Boolean
-    + hasContact(): Boolean
+    + displayInfo(): Unit
 }
 
 class Student_short {
-    --
     + displayInfo(): Unit
 }
 
-class Factory {
-    + validateGit(git: String): Boolean
-    + validatePhone(phone: String): Boolean
-    + validateTelegram(telegram: String): Boolean
-    + validateEmail(email: String): Boolean
+class StudentManager {
+    - students: MutableList<Student>
+    --
+    + write_to_txt(filePath: String, students: List<Student>): Unit
+    + read_from_txt(filePath: String): List<Student>
+    + createStudent(student: Student): Unit
+    + readStudent(id: Int): Student?
+    + displayAllStudents(): Unit
+    + testWriteAndRead(filePath: String): Unit
 }
 
 Person <|-- Student
 Person <|-- Student_short
-Person -down-> Factory : <<companion object>>
+
+StudentManager --> Student
+StudentManager --> Student_short
 
 @enduml

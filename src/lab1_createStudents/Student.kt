@@ -1,5 +1,9 @@
 package lab1_createStudents
 
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.IOException
+
 class Student(
     id: Int,
     surname: String,
@@ -35,10 +39,57 @@ class Student(
     }
 
     companion object Factory {
+        // Регулярные выражения для валидации
         private val phoneRegex = Regex("^\\+?[0-9]{10,15}\$")
+        private val telegramRegex = Regex("^@[A-Za-z0-9_]{5,32}\$")
+        private val emailRegex = Regex("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}\$")
+        private val gitRegex = Regex("^(https?://)?(www\\.)?github\\.com/[A-Za-z0-9_-]+/?\$")
 
+        // Проверка номера телефона
         fun isPhoneNumberValid(phone: String): Boolean {
             return phoneRegex.matches(phone)
+        }
+
+        // Проверка Telegram
+        fun isTelegramValid(telegram: String): Boolean {
+            return telegramRegex.matches(telegram)
+        }
+
+        // Проверка Email
+        fun isEmailValid(email: String): Boolean {
+            return emailRegex.matches(email)
+        }
+
+        // Проверка Git
+        fun isGitValid(git: String): Boolean {
+            return gitRegex.matches(git)
+        }
+
+        // Метод для чтения студентов из файла
+        @Throws(IOException::class, IllegalArgumentException::class)
+        fun read_from_txt(filePath: String): List<Student> {
+            val file = File(filePath)
+            if (!file.exists()) {
+                throw FileNotFoundException("Файл по адресу $filePath не найден.")
+            }
+
+            val studentList = mutableListOf<Student>()
+            file.forEachLine { line ->
+                try {
+                    // Создаем студента из строки и добавляем в список
+                    val student = Student(line)
+                    studentList.add(student)
+                } catch (e: IllegalArgumentException) {
+                    // Если строка некорректна, выбрасываем исключение
+                    println("Ошибка в строке: \"$line\". Пропускаем её.")
+                }
+            }
+
+            if (studentList.isEmpty()) {
+                throw IllegalArgumentException("В файле нет корректных данных для студентов.")
+            }
+
+            return studentList
         }
     }
 
@@ -46,6 +97,12 @@ class Student(
     fun setContacts(newPhone: String? = null, newTelegram: String? = null, newEmail: String? = null) {
         if (newPhone != null && !Factory.isPhoneNumberValid(newPhone)) {
             throw IllegalArgumentException("Неверный формат номера телефона")
+        }
+        if (newTelegram != null && !Factory.isTelegramValid(newTelegram)) {
+            throw IllegalArgumentException("Неверный формат Telegram")
+        }
+        if (newEmail != null && !Factory.isEmailValid(newEmail)) {
+            throw IllegalArgumentException("Неверный формат Email")
         }
         phone = newPhone
         telegram = newTelegram

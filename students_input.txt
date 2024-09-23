@@ -1,0 +1,3 @@
+1;Иванов;Иван;Иванович;+79112223344;@ivanov;ivanov@gmail.com;https://github.com/ivanov
+2;Петров;Петр;;+79112223345;;petrov@gmail.com;https://github.com/petrov
+3;Сидоров;Сидор;Сидорович;+79113334455;@sidorov;sidorov@gmail.com;https://github.com/sidorov

@@ -7,6 +7,21 @@ import java.io.IOException
 class StudentManager {
     private val students = mutableListOf<Student>()
 
+    // Метод для записи данных студентов в файл
+    @Throws(IOException::class)
+    fun write_to_txt(filePath: String, students: List<Student>) {
+        val file = File(filePath)
+        file.bufferedWriter().use { writer ->
+            students.forEach { student ->
+                writer.write(
+                    "${student.id};${student.surname};${student.name};${student.patronymic ?: ""};" +
+                            "${student.phone ?: ""};${student.telegram ?: ""};${student.email ?: ""};${student.git ?: ""}"
+                )
+                writer.newLine()
+            }
+        }
+    }
+
     // Метод для чтения данных студентов из файла
     @Throws(IOException::class, IllegalArgumentException::class)
     fun read_from_txt(filePath: String): List<Student> {
@@ -18,11 +33,9 @@ class StudentManager {
         val studentList = mutableListOf<Student>()
         file.forEachLine { line ->
             try {
-                // Создаем студента из строки и добавляем в список
                 val student = Student(line)
                 studentList.add(student)
             } catch (e: IllegalArgumentException) {
-                // Если строка некорректна, выбрасываем исключение
                 println("Ошибка в строке: \"$line\". Пропускаем её.")
             }
         }
@@ -34,6 +47,21 @@ class StudentManager {
         return studentList
     }
 
+    // Добавление студента в список
+    fun createStudent(student: Student) {
+        students.add(student)
+    }
+
+    // Чтение студента по ID
+    fun readStudent(id: Int): Student? {
+        return students.find { it.id == id }
+    }
+
+    // Получение списка всех студентов
+    fun getAllStudents(): List<Student> {
+        return students.toList()
+    }
+
     // Вывод всех студентов в кратком формате
     fun displayAllStudents() {
         if (students.isEmpty()) {
@@ -43,24 +71,20 @@ class StudentManager {
         }
     }
 
-    // Тестирование метода с добавлением студентов из файла
-    fun addStudentsFromFile(filePath: String) {
+    // Метод для тестирования записи и чтения студентов
+    fun testWriteAndRead(filePath: String) {
         try {
+            // Записываем студентов в файл
+            write_to_txt(filePath, students)
+            println("Студенты успешно записаны в файл.")
+
+            // Очищаем текущий список студентов и читаем их из файла
+            students.clear()
             val loadedStudents = read_from_txt(filePath)
             students.addAll(loadedStudents)
             println("Студенты успешно загружены из файла.")
         } catch (e: Exception) {
-            println("Ошибка при загрузке студентов: ${e.message}")
+            println("Ошибка при работе с файлом: ${e.message}")
         }
-    }
-
-    // Добавление студента в список
-    fun createStudent(student: Student) {
-        students.add(student)
-    }
-
-    // Поиск студента по ID
-    fun readStudent(id: Int): Student? {
-        return students.find { it.id == id }
     }
 }
